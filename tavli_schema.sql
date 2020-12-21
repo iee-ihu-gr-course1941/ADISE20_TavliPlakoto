@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Φιλοξενητής: 127.0.0.1
--- Χρόνος δημιουργίας: 11 Δεκ 2020 στις 15:39:06
+-- Χρόνος δημιουργίας: 21 Δεκ 2020 στις 14:21:46
 -- Έκδοση διακομιστή: 10.4.6-MariaDB
 -- Έκδοση PHP: 7.3.8
 
@@ -52,8 +52,8 @@ CREATE TABLE `board` (
   `x` tinyint(1) NOT NULL,
   `y` tinyint(1) NOT NULL,
   `b_color` enum('B','W') NOT NULL,
-  `1slot_piece` enum('W','B') DEFAULT NULL,
-  `2slot_piece` enum('W','B') DEFAULT NULL,
+  `first_piece` enum('W','B') DEFAULT NULL,
+  `second_piece` enum('W','B') DEFAULT NULL,
   `pieces` tinyint(6) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -61,7 +61,7 @@ CREATE TABLE `board` (
 -- Άδειασμα δεδομένων του πίνακα `board`
 --
 
-INSERT INTO `board` (`x`, `y`, `b_color`, `1slot_piece`, `2slot_piece`, `pieces`) VALUES
+INSERT INTO `board` (`x`, `y`, `b_color`, `first_piece`, `second_piece`, `pieces`) VALUES
 (1, 1, 'B', 'W', 'W', 2),
 (2, 1, 'W', 'B', 'B', 2),
 (1, 2, 'W', NULL, NULL, 0),
@@ -97,8 +97,8 @@ CREATE TABLE `board_empty` (
   `x` tinyint(1) NOT NULL,
   `y` tinyint(1) NOT NULL,
   `b_color` enum('B','W') NOT NULL,
-  `1slot_piece` enum('W','B') DEFAULT NULL,
-  `2slot_piece` enum('W','B') DEFAULT NULL,
+  `first_piece` enum('W','B') DEFAULT NULL,
+  `second_piece` enum('W','B') DEFAULT NULL,
   `pieces` tinyint(4) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -106,7 +106,7 @@ CREATE TABLE `board_empty` (
 -- Άδειασμα δεδομένων του πίνακα `board_empty`
 --
 
-INSERT INTO `board_empty` (`x`, `y`, `b_color`, `1slot_piece`, `2slot_piece`, `pieces`) VALUES
+INSERT INTO `board_empty` (`x`, `y`, `b_color`, `first_piece`, `second_piece`, `pieces`) VALUES
 (1, 1, 'B', 'B', 'B', 2),
 (2, 1, 'W', 'W', 'W', 2),
 (1, 2, 'W', NULL, NULL, 0),
@@ -150,7 +150,7 @@ CREATE TABLE `game_status` (
 --
 
 INSERT INTO `game_status` (`status`, `p_turn`, `result`, `last_change`) VALUES
-('not active', NULL, NULL, NULL);
+('not active', NULL, NULL, '2020-12-21 13:18:44');
 
 --
 -- Δείκτες `game_status`
@@ -170,16 +170,18 @@ DELIMITER ;
 
 CREATE TABLE `players` (
   `username` varchar(20) DEFAULT NULL,
-  `piece_color` enum('B','W') NOT NULL
+  `piece_color` enum('B','W') NOT NULL,
+  `token` varchar(100) DEFAULT NULL,
+  `last_action` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Άδειασμα δεδομένων του πίνακα `players`
 --
 
-INSERT INTO `players` (`username`, `piece_color`) VALUES
-(NULL, 'B'),
-(NULL, 'W');
+INSERT INTO `players` (`username`, `piece_color`, `token`, `last_action`) VALUES
+(NULL, 'B', NULL, NULL),
+(NULL, 'W', NULL, NULL);
 
 --
 -- Ευρετήρια για άχρηστους πίνακες
