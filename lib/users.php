@@ -12,7 +12,7 @@ function show_users() {
 function show_user($b) {
 	global $conn;
 	$sql = 'select username,piece_color from players where piece_color=?';
-	$st = $mysqli->prepare($sql);
+	$st = $conn->prepare($sql);
 	$st->bind_param('s',$b);
 	$st->execute();
 	$res = $st->get_result();
@@ -67,6 +67,19 @@ function handle_user($method, $b,$input) {
     }
 }
 
-
+function current_color($token) {
+	
+	global $conn;
+	if($token==null) {return(null);}
+	$sql = 'select * from players where token=?';
+	$st = $conn->prepare($sql);
+	$st->bind_param('s',$token);
+	$st->execute();
+	$res = $st->get_result();
+	if($row=$res->fetch_assoc()) {
+		return($row['piece_color']);
+	}
+	return(null);
+}
 
 ?>

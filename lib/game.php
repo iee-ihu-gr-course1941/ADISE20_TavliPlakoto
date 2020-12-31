@@ -3,6 +3,9 @@
 function show_status() {
 	
 	global $conn;
+
+	check_abort();
+
 	$sql = 'select * from game_status';
 	$st = $conn->prepare($sql);
 
@@ -23,7 +26,7 @@ function check_abort() {
 }
 
 
-function update_game_status() {
+function read_status() {
 	global $conn;
 	
 	$sql = 'select * from game_status';
@@ -32,17 +35,26 @@ function update_game_status() {
 	$st->execute();
 	$res = $st->get_result();
 	$status = $res->fetch_assoc();
-	
-	
+	return($status);
+}
+
+
+
+
+
+function update_game_status() {
+	global $conn;
+
+	$status = read_status();
 	$new_status=null;
 	$new_turn=null;
 	
-	$st3=$conn->prepare('select count(*) as aborted from players WHERE last_action< (NOW() - INTERVAL 5 MINUTE)');
+	$st3=$conn->prepare('select count(*) as aborted from players WHERE last_action< (NOW() - INTERVAL 15 MINUTE)');
 	$st3->execute();
 	$res3 = $st3->get_result();
 	$aborted = $res3->fetch_assoc()['aborted'];
 	if($aborted>0) {
-		$sql = "UPDATE players SET username=NULL, token=NULL WHERE last_action< (NOW() - INTERVAL 5 MINUTE)";
+		$sql = "UPDATE players SET username=NULL, token=NULL WHERE last_action< (NOW() - INTERVAL 15 MINUTE)";
 		$st2 = $conn->prepare($sql);
 		$st2->execute();
 		if($status['status']=='started') {
@@ -63,7 +75,7 @@ function update_game_status() {
 		case 1: $new_status='initialized'; break;
 		case 2: $new_status='started'; 
 				if($status['p_turn']==null) {
-					$new_turn='W'; // It was not started before...
+					$new_turn='B'; // It was not started before...
 				}
 				break;
 	}
