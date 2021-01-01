@@ -131,6 +131,8 @@ function fill_board_by_data(data) {
 		var dice1 = Math.floor(Math.random() * 6) + 1;
 		var dice2 = Math.floor(Math.random() * 6) + 1;
 		$("#dice_result").text(dice1+" "+dice2);
+		$("#dice1").val(dice1);
+		$("#dice2").val(dice2);
 		$("#roll_dice").prop("disabled", true);
 
 	}
@@ -138,6 +140,10 @@ function fill_board_by_data(data) {
 
 	function do_move() {
 		var s = $('#the_move').val();
+
+		var dice1 = $("#dice1").val();
+		var dice2 = $("#dice2").val();
+
 		
 		var a = s.trim().split(/[ ]+/);
 		if(a.length!=4 && a.length!=2) {
@@ -149,7 +155,7 @@ function fill_board_by_data(data) {
 					method: 'PUT',
 					dataType: "json",
 					contentType: 'application/json',
-					data: JSON.stringify( {x: a[2], y: a[3]}),
+					data: JSON.stringify( {x: a[2], y: a[3], dice1: dice1, dice2: dice2}),
 					headers: {"X-Token": me.token},
 					success: move_result,
 					error: login_error});
@@ -168,7 +174,8 @@ function fill_board_by_data(data) {
 		
 	}
 
-	function move_result(data){
+	function move_result(data)
+	{
 		game_status_update();
 		fill_board_by_data(data);
 		$("#roll_dice").prop("disabled", false);

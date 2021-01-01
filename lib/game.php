@@ -39,7 +39,28 @@ function read_status() {
 }
 
 
+function change_turn()
+{
+	global $conn;
 
+	$status = read_status();
+	$new_turn=null;
+
+	if($status['p_turn']=='W')
+	{
+		$new_turn = 'B';
+	}
+	else
+	{
+		$new_turn = 'W';
+	}
+
+	$sql = 'update game_status set p_turn=?';
+	$st = $conn->prepare($sql);
+	$st->bind_param('s',$new_turn);
+	$st->execute();
+
+}
 
 
 function update_game_status() {
