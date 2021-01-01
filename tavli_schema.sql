@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Φιλοξενητής: 127.0.0.1
--- Χρόνος δημιουργίας: 21 Δεκ 2020 στις 14:21:46
+-- Χρόνος δημιουργίας: 01 Ιαν 2021 στις 18:30:29
 -- Έκδοση διακομιστή: 10.4.6-MariaDB
 -- Έκδοση PHP: 7.3.8
 
@@ -30,6 +30,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `clean_board` ()  BEGIN
 	replace into board select * from board_empty;
     UPDATE `players` SET username=NULL, token=NULL;
 	UPDATE `game_status` SET `status`='not active', `p_turn`=NULL, `result`=NULL;
+    UPDATE `repository` SET `pieces` = 13, `phase`='start';
     END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `test_move` ()  BEGIN
@@ -62,11 +63,11 @@ CREATE TABLE `board` (
 --
 
 INSERT INTO `board` (`x`, `y`, `b_color`, `first_piece`, `second_piece`, `pieces`) VALUES
-(1, 1, 'B', 'W', 'W', 2),
-(2, 1, 'W', 'B', 'B', 2),
-(1, 2, 'W', NULL, NULL, 0),
-(2, 2, 'B', NULL, NULL, 0),
-(1, 3, 'B', NULL, NULL, 0),
+(1, 1, 'B', 'B', 'B', 2),
+(2, 1, 'W', 'W', 'W', 2),
+(1, 2, 'W', 'B', NULL, 1),
+(2, 2, 'B', 'W', 'W', 2),
+(1, 3, 'B', 'B', NULL, 1),
 (2, 3, 'W', NULL, NULL, 0),
 (1, 4, 'W', NULL, NULL, 0),
 (2, 4, 'B', NULL, NULL, 0),
@@ -150,7 +151,7 @@ CREATE TABLE `game_status` (
 --
 
 INSERT INTO `game_status` (`status`, `p_turn`, `result`, `last_change`) VALUES
-('not active', NULL, NULL, '2020-12-21 13:18:44');
+('started', 'B', NULL, '2021-01-01 17:19:20');
 
 --
 -- Δείκτες `game_status`
@@ -180,8 +181,28 @@ CREATE TABLE `players` (
 --
 
 INSERT INTO `players` (`username`, `piece_color`, `token`, `last_action`) VALUES
-(NULL, 'B', NULL, NULL),
-(NULL, 'W', NULL, NULL);
+('awef', 'B', '8273088a9ff3bdfe4006ae6c25fc8887', NULL),
+('adfv', 'W', '4dfdd21693add495ee274cbd8d276396', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Δομή πίνακα για τον πίνακα `repository`
+--
+
+CREATE TABLE `repository` (
+  `color` enum('W','B') NOT NULL,
+  `pieces` int(11) NOT NULL,
+  `phase` enum('start','end') NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Άδειασμα δεδομένων του πίνακα `repository`
+--
+
+INSERT INTO `repository` (`color`, `pieces`, `phase`) VALUES
+('W', 11, 'start'),
+('B', 11, 'start');
 
 --
 -- Ευρετήρια για άχρηστους πίνακες
@@ -200,10 +221,22 @@ ALTER TABLE `board_empty`
   ADD PRIMARY KEY (`y`,`x`);
 
 --
+-- Ευρετήρια για πίνακα `game_status`
+--
+ALTER TABLE `game_status`
+  ADD PRIMARY KEY (`status`);
+
+--
 -- Ευρετήρια για πίνακα `players`
 --
 ALTER TABLE `players`
   ADD PRIMARY KEY (`piece_color`);
+
+--
+-- Ευρετήρια για πίνακα `repository`
+--
+ALTER TABLE `repository`
+  ADD PRIMARY KEY (`color`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
