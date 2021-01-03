@@ -166,7 +166,7 @@ function fill_board_by_data(data) {
 					method: 'PUT',
 					dataType: "json",
 					contentType: 'application/json',
-					data: JSON.stringify( {x: a[0], y: a[1]}),
+					data: JSON.stringify( {x: a[0], y: a[1], dice1: dice1, dice2: dice2}),
 					headers: {"X-Token": me.token},
 					success: move_result,
 					error: login_error});

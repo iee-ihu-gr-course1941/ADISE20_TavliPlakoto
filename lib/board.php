@@ -89,8 +89,6 @@ function move_piece($x,$y,$x2,$y2,$dice1,$dice2,$token) {
 		$index = array("2.1", "2.2", "2.3", "2.4", "2.5", "2.6", "2.7", "2.8", "2.9", "2.10", "2.11", "2.12", "1.12", "1.11", "1.10", "1.9", "1.8", "1.7", "1.6", "1.5", "1.4", "1.3", "1.2", "1.1");
 	}	
 
-	$source_index = array_search("$x.$y", $index);
-	$destination_index = array_search("$x2.$y2", $index);
 
 
 	if($token==null || $token=='') {
@@ -121,6 +119,20 @@ function move_piece($x,$y,$x2,$y2,$dice1,$dice2,$token) {
 		$phase = get_phase($token);
 		$pieces_in_repo = get_from_repo($token);
 
+
+		if($color=='B')
+		{
+			$source_index = array_search("1.1", $index);
+			$destination_index = array_search("$x2.$y2", $index);
+
+		}
+		else
+		{
+			$source_index = array_search("2.1", $index);
+			$destination_index = array_search("$x2.$y2", $index);
+		}
+
+
 		if($phase=='start')
 		{
 			$destination = get_piece_info($x2,$y2);
@@ -128,6 +140,26 @@ function move_piece($x,$y,$x2,$y2,$dice1,$dice2,$token) {
 
 			$new_destination_pieces = $destination_pieces + 1;
 			$new_repo_pieces = $pieces_in_repo - 1;
+
+
+			for($i=$source_index+1; $i<=$destination_index; $i++)
+			{
+				$steps_count++;
+			}
+
+			if($steps_count>$dice_sum)
+			{
+				header("HTTP/1.1 400 Bad Request");
+				print json_encode(['errormesg'=>"Your dice sum is less from what you played"]);
+				exit;
+			}
+			elseif($steps_count!=$dice_sum && $steps_count!=$dice1 && $steps_count!=$dice2)
+			{
+				header("HTTP/1.1 400 Bad Request");
+				print json_encode(['errormesg'=>"Play a move allowed by your dice"]);
+				exit;
+			}
+
 
 			if($destination_pieces==0)
 				{	
@@ -172,6 +204,47 @@ function move_piece($x,$y,$x2,$y2,$dice1,$dice2,$token) {
 			$source = get_piece_info($x2,$y2);
 			$source_pieces = $source['pieces'];
 
+
+			if($color=='B')
+			{
+				if($x2==1)
+				{
+					header("HTTP/1.1 400 Bad Request");
+					print json_encode(['errormesg'=>"You cant put a piece in the repository from this position"]);
+					exit;
+				}
+			}
+			else
+			{
+				if($x2==2)
+				{
+					header("HTTP/1.1 400 Bad Request");
+					print json_encode(['errormesg'=>"You cant put a piece in the repository from this position"]);
+					exit;
+				}
+			}
+
+
+
+			for($i=$source_index; $i<=$destination_index; $i++)
+			{
+				$steps_count++;
+			}
+
+			if($steps_count>$dice_sum)
+			{
+				header("HTTP/1.1 400 Bad Request");
+				print json_encode(['errormesg'=>"Your dice sum is less from what you played"]);
+				exit;
+			}
+			elseif($steps_count!=$dice_sum && $steps_count!=$dice1 && $steps_count!=$dice2)
+			{
+				header("HTTP/1.1 400 Bad Request");
+				print json_encode(['errormesg'=>"Play a move allowed by your dice"]);
+				exit;
+			}
+
+
 			if($source_pieces==0)
 			{
 				header("HTTP/1.1 400 Bad Request");
@@ -214,6 +287,10 @@ function move_piece($x,$y,$x2,$y2,$dice1,$dice2,$token) {
 	}
 	else
 	{
+
+		$source_index = array_search("$x.$y", $index);
+		$destination_index = array_search("$x2.$y2", $index);
+
 		if($color=='B')
 		{
 			if($x>$x2)
