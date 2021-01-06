@@ -500,7 +500,6 @@ function move_piece($x,$y,$x2,$y2,$dice1,$dice2,$token) {
 		}
 		elseif($steps_count!=$dice_sum && $steps_count!=$dice1 && $steps_count!=$dice2)
 		{
-				print json_encode([$steps_count]);
 				header("HTTP/1.1 400 Bad Request");
 				print json_encode(['errormesg'=>"Play a move allowed by your dice"]);
 				exit;
