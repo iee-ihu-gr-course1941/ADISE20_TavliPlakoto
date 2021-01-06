@@ -1,5 +1,5 @@
 # ADISE20_TavliPlakoto
-Ο σύνδεσμος του παιχνιδιού:
+Ο σύνδεσμος του παιχνιδιού: https://users.iee.ihu.gr/~it154510/ADISE20_TavliPlakoto/
 
 # Περιγραφή Παιχνιδιού
 
