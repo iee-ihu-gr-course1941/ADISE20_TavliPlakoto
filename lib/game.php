@@ -63,6 +63,7 @@ function change_turn()
 }
 
 
+
 function update_game_status() {
 	global $conn;
 

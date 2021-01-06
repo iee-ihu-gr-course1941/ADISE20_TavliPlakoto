@@ -93,29 +93,34 @@ function fill_board_by_data(data) {
 		$.ajax({url: "tavli.php/status/", headers: {"X-Token": me.token}, success: update_status });
 	}
 
-	//function update_turn()
-	//{
-	//	$.ajax({url: "tavli.php/status/", method: 'PUT',headers: {"X-Token": me.token}, success: game_status_update });
-	//}
-
 	function update_status(data) {
 		var game_stat_old = game_status;
 		game_status=data[0];
 		update_info();
-		if(game_status.p_turn==me.piece_color &&  me.piece_color!=null) {
+		if(game_status.p_turn==me.piece_color &&  me.piece_color!=null) 
+		{
 			x=0;
 			// do play
-			if(game_stat_old.p_turn!=game_status.p_turn) {
+			if(game_stat_old.p_turn!=game_status.p_turn)
+			{
 				fill_board();
 			}
 			$("#dice").show(1000);
 			$('#move_div').show(1000);
-			setTimeout(function() { game_status_update();}, 15000);
-		} else {
+			setTimeout(function() { game_status_update();}, 4000);
+		} 
+		else 
+		{
 			// must wait for something
 			$("#dice").hide(1000);
 			$('#move_div').hide(1000);
 			setTimeout(function() { game_status_update();}, 4000);
+		}
+		if(game_status.result!=null)
+		{	
+			$("#roll_dice").prop("disabled", true);
+			$("#do_move").prop("disabled", true);
+			alert("Game has ended! "+game_status.result+ " has won!");
 		}
 		 
 	}

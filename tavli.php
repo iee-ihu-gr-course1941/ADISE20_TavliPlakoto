@@ -33,7 +33,6 @@ switch ($r=array_shift($request)) {
                                 break;
     case 'status': 
                         if(sizeof($request)==0) {show_status();}
-                        //elseif($method=='PUT'){update_game_status();}
 			else {header("HTTP/1.1 404 Not Found");}
 			break;
 	case 'players': handle_player($method, $request,$input);

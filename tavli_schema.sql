@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Φιλοξενητής: 127.0.0.1
--- Χρόνος δημιουργίας: 01 Ιαν 2021 στις 18:30:29
+-- Χρόνος δημιουργίας: 06 Ιαν 2021 στις 13:28:17
 -- Έκδοση διακομιστή: 10.4.6-MariaDB
 -- Έκδοση PHP: 7.3.8
 
@@ -28,7 +28,7 @@ DELIMITER $$
 --
 CREATE DEFINER=`root`@`localhost` PROCEDURE `clean_board` ()  BEGIN
 	replace into board select * from board_empty;
-    UPDATE `players` SET username=NULL, token=NULL;
+    UPDATE `players` SET username=NULL, token=NULL, 		moves_played=0;
 	UPDATE `game_status` SET `status`='not active', `p_turn`=NULL, `result`=NULL;
     UPDATE `repository` SET `pieces` = 13, `phase`='start';
     END$$
@@ -65,9 +65,9 @@ CREATE TABLE `board` (
 INSERT INTO `board` (`x`, `y`, `b_color`, `first_piece`, `second_piece`, `pieces`) VALUES
 (1, 1, 'B', 'B', 'B', 2),
 (2, 1, 'W', 'W', 'W', 2),
-(1, 2, 'W', 'B', NULL, 1),
-(2, 2, 'B', 'W', 'W', 2),
-(1, 3, 'B', 'B', NULL, 1),
+(1, 2, 'W', NULL, NULL, 0),
+(2, 2, 'B', NULL, NULL, 0),
+(1, 3, 'B', NULL, NULL, 0),
 (2, 3, 'W', NULL, NULL, 0),
 (1, 4, 'W', NULL, NULL, 0),
 (2, 4, 'B', NULL, NULL, 0),
@@ -151,7 +151,7 @@ CREATE TABLE `game_status` (
 --
 
 INSERT INTO `game_status` (`status`, `p_turn`, `result`, `last_change`) VALUES
-('started', 'B', NULL, '2021-01-01 17:19:20');
+('not active', NULL, NULL, '2021-01-06 12:19:34');
 
 --
 -- Δείκτες `game_status`
@@ -173,16 +173,18 @@ CREATE TABLE `players` (
   `username` varchar(20) DEFAULT NULL,
   `piece_color` enum('B','W') NOT NULL,
   `token` varchar(100) DEFAULT NULL,
-  `last_action` timestamp NULL DEFAULT NULL
+  `last_action` timestamp NULL DEFAULT NULL,
+  `moves_played` int(11) NOT NULL DEFAULT 0,
+  `sum` int(11) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Άδειασμα δεδομένων του πίνακα `players`
 --
 
-INSERT INTO `players` (`username`, `piece_color`, `token`, `last_action`) VALUES
-('awef', 'B', '8273088a9ff3bdfe4006ae6c25fc8887', NULL),
-('adfv', 'W', '4dfdd21693add495ee274cbd8d276396', NULL);
+INSERT INTO `players` (`username`, `piece_color`, `token`, `last_action`, `moves_played`, `sum`) VALUES
+(NULL, 'B', NULL, NULL, 0, 0),
+(NULL, 'W', NULL, NULL, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -201,8 +203,8 @@ CREATE TABLE `repository` (
 --
 
 INSERT INTO `repository` (`color`, `pieces`, `phase`) VALUES
-('W', 11, 'start'),
-('B', 11, 'start');
+('W', 13, 'start'),
+('B', 13, 'start');
 
 --
 -- Ευρετήρια για άχρηστους πίνακες
